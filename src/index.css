@@ -16,3 +16,11 @@
     box-sizing: inherit;
   }
 }
+
+.rdg-row:nth-of-type(odd) {
+  @apply bg-neutral-100;
+}
+
+.rdg-row:hover {
+  @apply bg-blue-100;
+}

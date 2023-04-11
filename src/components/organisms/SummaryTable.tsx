@@ -97,7 +97,6 @@ class SummaryTable extends Component<MyProps, MyState> {
           sortColumns={this.state.sortColumns}
           onSortColumnsChange={this.setSortColumns}
           defaultColumnOptions={{ sortable: true }}
-          onCellClick={() => null}
         />
       </div>
     );
