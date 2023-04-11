@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { TotalSummary } from '../../types/summary';
 import GlobalDataField from '../atoms/GlobalDataField';
 import GlobalDataSummaryLoader from './GlobalDataSummaryLoader';
+import GlobalDataSummaryError from '../atoms/GlobalDataSummaryError';
 
 interface MyProps {
   data: TotalSummary | null;
+  isError: boolean;
 }
 
 class GlobalDataSummary extends Component<MyProps, {}> {
@@ -13,7 +15,7 @@ class GlobalDataSummary extends Component<MyProps, {}> {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, isError } = this.props;
 
     return (
       <div className="bg-color-corners p-1">
@@ -27,8 +29,10 @@ class GlobalDataSummary extends Component<MyProps, {}> {
             <GlobalDataField title="DEATHS" data={data['Global']['TotalDeaths']} />
             <GlobalDataField title="RECOVERED" data={data['Global']['TotalRecovered']} />
           </div>
-        ) : (
+        ) : !isError ? (
           <GlobalDataSummaryLoader />
+        ) : (
+          <GlobalDataSummaryError />
         )}
       </div>
     );

@@ -6,6 +6,7 @@ import SummaryTable from '../organisms/SummaryTable';
 
 interface MyState {
   data: TotalSummary | null;
+  isError: boolean;
 }
 
 class Summary extends Component<{}, MyState> {
@@ -13,19 +14,22 @@ class Summary extends Component<{}, MyState> {
     super(props);
     this.state = {
       data: null,
+      isError: false,
     };
   }
 
   componentDidMount() {
-    memoFetch(`${process.env.REACT_APP_BASE_URL}/summary`).then((data) => this.setState({ data }));
+    memoFetch(`${process.env.REACT_APP_BASE_URL}/summary`)
+      .then((data) => this.setState({ data }))
+      .catch((_) => this.setState({ isError: true }));
   }
 
   render() {
-    const { data } = this.state;
+    const { data, isError } = this.state;
 
     return (
       <div className="w-full h-auto flex justify-start items-center flex-col">
-        <GlobalDataSummary data={data} />
+        <GlobalDataSummary data={data} isError={isError} />
         <SummaryTable data={data} />
       </div>
     );
