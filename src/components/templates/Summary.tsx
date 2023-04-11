@@ -3,6 +3,7 @@ import memoFetch from '../../utils/memoFetch';
 import { TotalSummary } from '../../types/summary';
 import GlobalDataSummary from '../molecules/GlobalDataSummary';
 import SummaryTable from '../organisms/SummaryTable';
+import SummaryTableLoader from '../molecules/SummaryTableLoader';
 
 interface MyState {
   data: TotalSummary | null;
@@ -30,7 +31,7 @@ class Summary extends Component<{}, MyState> {
     return (
       <div className="w-full h-auto flex justify-start items-center flex-col">
         <GlobalDataSummary data={data} isError={isError} />
-        <SummaryTable data={data} />
+        {data ? <SummaryTable data={data} /> : <SummaryTableLoader />}
       </div>
     );
   }
