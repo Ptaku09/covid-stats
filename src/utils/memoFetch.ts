@@ -1,7 +1,7 @@
 import axios from 'axios';
-import Summary from '../types/summary';
+import { TotalSummary } from '../types/summary';
 
-const cache = new Map<string, Summary>();
+const cache = new Map<string, TotalSummary>();
 
 const memoFetch = async (url: string) => {
   if (cache.has(url)) {

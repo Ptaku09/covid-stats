@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Country from '../../types/country';
+import { CountrySummary } from '../../types/summary';
 
 interface MyProps {
   index: number;
-  countrySummary: Country;
+  countrySummary: CountrySummary;
 }
 
 class SummaryTableRow extends Component<MyProps, {}> {

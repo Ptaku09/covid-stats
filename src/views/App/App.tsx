@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import SummaryTable from '../../components/organisms/SummaryTable';
+import Summary from '../../components/templates/Summary';
 
 class App extends Component<{}, {}> {
   render() {
     return (
-      <div className="w-screen h-auto min-h-screen">
-        <SummaryTable />
+      <div className="w-screen h-auto min-h-screen font-rubik">
+        <Summary />
       </div>
     );
   }

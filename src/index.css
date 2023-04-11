@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 @layer base {
-    html,
-    body {
-        box-sizing: border-box;
-        scroll-behavior: smooth;
-        overflow-x: hidden;
-    }
+  html,
+  body {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
 
-    *,
-    *::after,
-    *::before {
-        box-sizing: inherit;
-    }
+  *,
+  *::after,
+  *::before {
+    box-sizing: inherit;
+  }
 }

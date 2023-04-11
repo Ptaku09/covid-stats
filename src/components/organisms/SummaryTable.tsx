@@ -1,32 +1,26 @@
 import React, { Component } from 'react';
 import SummaryTableLabel from '../atoms/SummaryTableLabel';
-import Summary from '../../types/summary';
 import SummaryTableRow from '../molecules/SummaryTableRow';
 import SummaryTableLoader from '../molecules/SummaryTableLoader';
-import memoFetch from '../../utils/memoFetch';
+import { TotalSummary } from '../../types/summary';
 
-interface MyState {
-  data: Summary | null;
+interface MyProps {
+  data: TotalSummary | null;
 }
 
-class SummaryTable extends Component<{}, MyState> {
-  constructor(props = {}) {
+class SummaryTable extends Component<MyProps, {}> {
+  constructor(props: MyProps) {
     super(props);
-    this.state = {
-      data: null,
-    };
-  }
-
-  componentDidMount() {
-    memoFetch('https://api.covid19api.com/summary').then((data) => this.setState({ data }));
   }
 
   render() {
+    const { data } = this.props;
+
     return (
       <div className="w-full h-auto">
         <SummaryTableLabel />
-        {this.state.data ? (
-          this.state.data['Countries'].map((item, index) => <SummaryTableRow index={index} countrySummary={item} key={item['ID']} />)
+        {data ? (
+          data['Countries'].map((item, index) => <SummaryTableRow index={index} countrySummary={item} key={item['ID']} />)
         ) : (
           <SummaryTableLoader />
         )}
