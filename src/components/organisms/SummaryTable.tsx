@@ -127,13 +127,19 @@ class SummaryTable extends Component<MyProps, MyState> {
     this.setState({ sortColumns });
   };
 
+  filteredRows() {
+    return this.state.rows.filter((row) => {
+      return row['Country'].toLowerCase().startsWith(this.state.filters.Country.toLowerCase());
+    });
+  }
+
   render() {
     return (
       <div className="w-full h-screen flex items-center justify-center py-10">
         <FilterContext.Provider value={this.state.filters}>
           <DataGrid
             className="rdg-light w-5/6 h-full border-2"
-            rows={this.sortedRows()}
+            rows={this.filteredRows()}
             rowClass={(row) => `hover:bg-blue-100 ${row.Index % 2 === 0 ? 'bg-neutral-100' : ''}`}
             onCellClick={(cell) => console.log(cell.row['Slug'])}
             columns={this.columns}
