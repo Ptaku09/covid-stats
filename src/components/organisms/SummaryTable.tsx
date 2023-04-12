@@ -92,8 +92,10 @@ class SummaryTable extends Component<MyProps, MyState> {
       <div className="w-full h-screen flex items-center justify-center py-10">
         <DataGrid
           className="rdg-light w-5/6 h-full border-2"
-          columns={SummaryTable.columns}
           rows={this.sortedRows()}
+          rowClass={(row) => `hover:bg-blue-100 ${row.Index % 2 === 0 ? 'bg-neutral-100' : ''}`}
+          onCellClick={(cell) => console.log(cell.row['Slug'])}
+          columns={SummaryTable.columns}
           sortColumns={this.state.sortColumns}
           onSortColumnsChange={this.setSortColumns}
           defaultColumnOptions={{ sortable: true }}
