@@ -1,20 +1,28 @@
 import React, { Component } from 'react';
 import { CountrySummary, TotalSummary } from '../../types/summary';
-import DataGrid, { SortColumn } from 'react-data-grid';
+import DataGrid, { FormatterProps, SortColumn } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
+import FilterRendererWithHooks, { FilterContext } from '../utils/FileRendererWithHooks';
+import CountryNameWithFlag from '../atoms/CountryNameWithFlag';
 
 interface MyProps {
   data: TotalSummary;
 }
 
-interface CustomCountrySummary extends CountrySummary {
+interface CustomCountrySummary extends Omit<CountrySummary, 'ID' | 'Date' | 'Premium'> {
+  [key: string]: string | number;
   Index: number;
-  CountryWithFlag: JSX.Element;
+}
+
+export interface Filter extends Pick<CustomCountrySummary, 'Country'> {
+  complete: number | undefined;
+  enabled: boolean;
 }
 
 interface MyState {
   rows: CustomCountrySummary[];
   sortColumns: readonly SortColumn[];
+  filters: Filter;
 }
 
 type Comparator = (a: CustomCountrySummary, b: CustomCountrySummary) => number;
@@ -36,9 +44,34 @@ function getComparator(column: string): Comparator {
 }
 
 class SummaryTable extends Component<MyProps, MyState> {
-  static columns = [
+  columns = [
     { key: 'Index', name: '#' },
-    { key: 'CountryWithFlag', name: 'Country' },
+    {
+      key: 'Country',
+      name: 'Country',
+      headerCellClass: 'leading-9 p-0 h-36 flex items-center justify-center flex-col bg-red-100',
+      headerRenderer: (props: any) => (
+        <FilterRendererWithHooks<CustomCountrySummary, unknown, HTMLInputElement> {...props}>
+          {({ filters, ...rest }) => (
+            <input
+              {...rest}
+              value={filters['Country']}
+              className="w-5/6 h-8 p-3 border-2 rounded-lg"
+              maxLength={30}
+              onChange={(e) =>
+                this.setState({
+                  filters: {
+                    ...filters,
+                    Country: e.target.value,
+                  },
+                })
+              }
+              onKeyDown={(e) => ['ArrowLeft', 'ArrowRight'].includes(e.key) && e.stopPropagation()}
+            />
+          )}
+        </FilterRendererWithHooks>
+      ),
+    },
     { key: 'NewConfirmed', name: 'New Confirmed' },
     { key: 'TotalConfirmed', name: 'Total Confirmed' },
     { key: 'NewDeaths', name: 'New Deaths' },
@@ -52,15 +85,22 @@ class SummaryTable extends Component<MyProps, MyState> {
     this.state = {
       rows: props.data['Countries'].map((item, index) => ({
         Index: index + 1,
-        CountryWithFlag: (
-          <div className="flex items-center justify-start gap-3">
-            <img src={`https://flagcdn.com/20x15/${item['CountryCode'].toLowerCase()}.png`} width="20" height="15" alt={item['Country']} />
-            <p>{item['Country']}</p>
-          </div>
-        ),
-        ...item,
+        Country: item['Country'],
+        CountryCode: item['CountryCode'],
+        Slug: item['Slug'],
+        NewConfirmed: item['NewConfirmed'],
+        TotalConfirmed: item['TotalConfirmed'],
+        NewDeaths: item['NewDeaths'],
+        TotalDeaths: item['TotalDeaths'],
+        NewRecovered: item['NewRecovered'],
+        TotalRecovered: item['TotalRecovered'],
       })),
       sortColumns: [],
+      filters: {
+        complete: undefined,
+        enabled: true,
+        Country: '',
+      },
     };
   }
 
@@ -90,16 +130,27 @@ class SummaryTable extends Component<MyProps, MyState> {
   render() {
     return (
       <div className="w-full h-screen flex items-center justify-center py-10">
-        <DataGrid
-          className="rdg-light w-5/6 h-full border-2"
-          rows={this.sortedRows()}
-          rowClass={(row) => `hover:bg-blue-100 ${row.Index % 2 === 0 ? 'bg-neutral-100' : ''}`}
-          onCellClick={(cell) => console.log(cell.row['Slug'])}
-          columns={SummaryTable.columns}
-          sortColumns={this.state.sortColumns}
-          onSortColumnsChange={this.setSortColumns}
-          defaultColumnOptions={{ sortable: true }}
-        />
+        <FilterContext.Provider value={this.state.filters}>
+          <DataGrid
+            className="rdg-light w-5/6 h-full border-2"
+            rows={this.sortedRows()}
+            rowClass={(row) => `hover:bg-blue-100 ${row.Index % 2 === 0 ? 'bg-neutral-100' : ''}`}
+            onCellClick={(cell) => console.log(cell.row['Slug'])}
+            columns={this.columns}
+            sortColumns={this.state.sortColumns}
+            onSortColumnsChange={this.setSortColumns}
+            defaultColumnOptions={{
+              sortable: true,
+              formatter: (e: FormatterProps<CustomCountrySummary>) => {
+                if (e.column.key === 'Country') {
+                  return <CountryNameWithFlag countryCode={e.row['CountryCode']} countryName={e.row['Country']} />;
+                }
+
+                return e.row[e.column.key];
+              },
+            }}
+          />
+        </FilterContext.Provider>
       </div>
     );
   }
