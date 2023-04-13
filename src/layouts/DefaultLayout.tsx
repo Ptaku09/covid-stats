@@ -13,11 +13,11 @@ class DefaultLayout extends Component<MyProps, {}> {
 
   render() {
     return (
-      <>
+      <div className="bg-white">
         <Header />
         <main className="w-full h-auto py-12 lg:p-0 lg:-translate-y-20 font-rubik">{this.props.children}</main>
         <Footer />
-      </>
+      </div>
     );
   }
 }
