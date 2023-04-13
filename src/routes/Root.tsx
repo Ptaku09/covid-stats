@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import Summary from '../../components/templates/Summary';
+import Summary from '../components/templates/Summary';
 
-class App extends Component<{}, {}> {
+class Root extends Component<{}, {}> {
   render() {
     return (
       <div className="w-screen h-auto min-h-screen">
@@ -11,4 +11,4 @@ class App extends Component<{}, {}> {
   }
 }
 
-export default App;
+export default Root;

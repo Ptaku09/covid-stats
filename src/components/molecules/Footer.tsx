@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class Footer extends Component<{}, {}> {
   render() {
     return (
-      <footer className="h-16 pb-4 bg-neutral-200 rounded-t-[70%50px]">
+      <footer className="absolute bottom-0 w-full h-16 pb-4 bg-neutral-200 rounded-t-[70%50px]">
         <div className="h-full flex items-end justify-center w-full text-sm font-bold">
           <p>
             <span className="after:content-['❤'] after:font-sans after:mx-1">Created with</span>

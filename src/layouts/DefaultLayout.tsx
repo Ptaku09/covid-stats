@@ -13,9 +13,9 @@ class DefaultLayout extends Component<MyProps, {}> {
 
   render() {
     return (
-      <div className="bg-white">
+      <div className="relative bg-white min-h-screen">
         <Header />
-        <main className="w-full h-auto py-12 lg:p-0 lg:-translate-y-20 font-rubik">{this.props.children}</main>
+        <main className="w-full h-auto py-12 pb-24 lg:p-0 lg:pb-4 lg:-translate-y-20 font-rubik">{this.props.children}</main>
         <Footer />
       </div>
     );
