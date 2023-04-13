@@ -23,6 +23,7 @@ interface MyState {
   rows: CustomCountrySummary[];
   sortColumns: readonly SortColumn[];
   filters: Filter;
+  combinedRows: CustomCountrySummary[];
 }
 
 type Comparator = (a: CustomCountrySummary, b: CustomCountrySummary) => number;
@@ -49,14 +50,14 @@ class SummaryTable extends Component<MyProps, MyState> {
     {
       key: 'Country',
       name: 'Country',
-      headerCellClass: 'leading-9 p-0 h-36 flex items-center justify-center flex-col bg-red-100',
+      headerCellClass: 'leading-9 p-0 h-20 flex items-center justify-start flex-col bg-red-100',
       headerRenderer: (props: any) => (
         <FilterRendererWithHooks<CustomCountrySummary, unknown, HTMLInputElement> {...props}>
           {({ filters, ...rest }) => (
             <input
               {...rest}
               value={filters['Country']}
-              className="w-5/6 h-8 p-3 border-2 rounded-lg"
+              className="w-auto h-8 py-3 mx-10 border-2 rounded-lg"
               maxLength={30}
               onChange={(e) =>
                 this.setState({
@@ -101,7 +102,20 @@ class SummaryTable extends Component<MyProps, MyState> {
         enabled: true,
         Country: '',
       },
+      combinedRows: [],
     };
+  }
+
+  componentDidMount() {
+    this.setState({
+      combinedRows: this.state.rows,
+    });
+  }
+
+  componentDidUpdate(prevProps: MyProps, prevState: MyState) {
+    if (prevState.filters !== this.state.filters || prevState.sortColumns !== this.state.sortColumns) {
+      this.combineResults();
+    }
   }
 
   sortedRows() {
@@ -136,7 +150,9 @@ class SummaryTable extends Component<MyProps, MyState> {
   combineResults() {
     const sortedRows = this.sortedRows();
     const filteredRows = this.filteredRows();
-    return sortedRows.filter((row) => filteredRows.includes(row));
+    const combinedRows = sortedRows.filter((row) => filteredRows.includes(row));
+
+    this.setState({ combinedRows });
   }
 
   render() {
@@ -145,8 +161,10 @@ class SummaryTable extends Component<MyProps, MyState> {
         <FilterContext.Provider value={this.state.filters}>
           <DataGrid
             className="rdg-light w-5/6 h-full border-2"
-            rows={this.combineResults()}
-            rowClass={(row) => `hover:bg-blue-100 ${row.Index % 2 === 0 ? 'bg-neutral-100' : ''}`}
+            headerRowHeight={80}
+            rows={this.state.combinedRows}
+            rowClass={(row) => `hover:bg-blue-100 ${this.state.combinedRows.indexOf(row) % 2 === 0 ? 'bg-neutral-100' : ''}`}
+            rowHeight={50}
             onCellClick={(cell) => console.log(cell.row['Slug'])}
             columns={this.columns}
             sortColumns={this.state.sortColumns}
