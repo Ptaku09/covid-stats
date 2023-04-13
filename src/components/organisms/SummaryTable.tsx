@@ -46,18 +46,18 @@ function getComparator(column: string): Comparator {
 
 class SummaryTable extends Component<MyProps, MyState> {
   columns = [
-    { key: 'Index', name: '#' },
+    { key: 'Index', name: '#', headerCellClass: 'box-border border-b-2 border-r-2' },
     {
       key: 'Country',
       name: 'Country',
-      headerCellClass: 'leading-9 p-0 h-20 flex items-center justify-start flex-col bg-red-100',
+      headerCellClass: 'leading-8 box-border border-b-2 border-r-2',
       headerRenderer: (props: any) => (
         <FilterRendererWithHooks<CustomCountrySummary, unknown, HTMLInputElement> {...props}>
           {({ filters, ...rest }) => (
             <input
               {...rest}
               value={filters['Country']}
-              className="w-auto h-8 py-3 mx-10 border-2 rounded-lg"
+              className="w-auto h-8 px-2 border-2 rounded-lg font-thin"
               maxLength={30}
               onChange={(e) =>
                 this.setState({
@@ -73,12 +73,12 @@ class SummaryTable extends Component<MyProps, MyState> {
         </FilterRendererWithHooks>
       ),
     },
-    { key: 'NewConfirmed', name: 'New Confirmed' },
-    { key: 'TotalConfirmed', name: 'Total Confirmed' },
-    { key: 'NewDeaths', name: 'New Deaths' },
-    { key: 'TotalDeaths', name: 'Total Deaths' },
-    { key: 'NewRecovered', name: 'New Recovered' },
-    { key: 'TotalRecovered', name: 'Total Recovered' },
+    { key: 'NewConfirmed', name: 'New Confirmed', headerCellClass: 'box-border border-b-2 border-r-2' },
+    { key: 'TotalConfirmed', name: 'Total Confirmed', headerCellClass: 'box-border border-b-2 border-r-2' },
+    { key: 'NewDeaths', name: 'New Deaths', headerCellClass: 'box-border border-b-2 border-r-2' },
+    { key: 'TotalDeaths', name: 'Total Deaths', headerCellClass: 'box-border border-b-2 border-r-2' },
+    { key: 'NewRecovered', name: 'New Recovered', headerCellClass: 'box-border border-b-2 border-r-2' },
+    { key: 'TotalRecovered', name: 'Total Recovered', headerCellClass: 'box-border border-b-2' },
   ];
 
   constructor(props: MyProps) {
