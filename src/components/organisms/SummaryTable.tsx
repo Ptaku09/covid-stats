@@ -157,7 +157,7 @@ class SummaryTable extends Component<MyProps, MyState> {
 
   render() {
     return (
-      <div className="w-full h-screen flex items-center justify-center py-10">
+      <div className="w-full h-screen flex items-center justify-center">
         <FilterContext.Provider value={this.state.filters}>
           <DataGrid
             className="rdg-light w-5/6 h-full border-2"

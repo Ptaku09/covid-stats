@@ -29,7 +29,7 @@ class Summary extends Component<{}, MyState> {
     const { data, isError } = this.state;
 
     return (
-      <div className="w-full h-auto flex justify-start items-center flex-col">
+      <div className="w-full h-auto flex justify-start items-center flex-col gap-10">
         <GlobalDataSummary data={data} isError={isError} />
         {data ? <SummaryTable data={data} /> : <SummaryTableLoader />}
       </div>

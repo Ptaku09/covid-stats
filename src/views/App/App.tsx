@@ -4,7 +4,7 @@ import Summary from '../../components/templates/Summary';
 class App extends Component<{}, {}> {
   render() {
     return (
-      <div className="w-screen h-auto min-h-screen font-rubik">
+      <div className="w-screen h-auto min-h-screen">
         <Summary />
       </div>
     );
