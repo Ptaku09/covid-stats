@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
 import withRouter, { WithRouterProps } from '../utils/withRouter';
 import { ComposableMap, Geographies, Geography, Graticule, Sphere } from 'react-simple-maps';
+import memoFetch from '../utils/memoFetch';
+import { CountryDailyInfo } from '../types/country';
 
-class CountryInfo extends Component<WithRouterProps, {}> {
+interface MyState {
+  data: CountryDailyInfo[] | null;
+  isError: boolean;
+}
+
+class CountryInfo extends Component<WithRouterProps, MyState> {
   constructor(props: WithRouterProps) {
     super(props);
+    this.state = {
+      data: null,
+      isError: false,
+    };
   }
 
   componentDidMount() {
@@ -13,15 +24,18 @@ class CountryInfo extends Component<WithRouterProps, {}> {
   }
 
   fetchCountryData(countrySlug: string) {
-    console.log(countrySlug);
+    memoFetch(`${process.env.REACT_APP_BASE_URL}/country/${countrySlug}`)
+      .then((data) => this.setState({ data }))
+      .catch((err) => {
+        console.error(err);
+        this.setState({ isError: true });
+      });
   }
 
   render() {
-    const { countrySlug } = this.props.router.params;
-
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <div className="w-5/6 px-5 border-2 border-neutral-200">
+        <div className="hidden md:flex w-5/6 px-5 border-2 border-neutral-200">
           <ComposableMap
             projectionConfig={{
               rotate: [-10, 0, 0],
