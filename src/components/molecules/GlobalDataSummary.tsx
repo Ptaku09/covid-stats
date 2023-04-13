@@ -18,11 +18,11 @@ class GlobalDataSummary extends Component<MyProps, {}> {
     const { data, isError } = this.props;
 
     return (
-      <div className="bg-color-corners p-1">
+      <div className="bg-color-corners p-1 mx-5 lg:mx-0">
         {data ? (
           <div className="p-8 flex items-center flex-col gap-5 bg-white">
             <div className="flex items-center flex-col">
-              <h3 className="text-5xl font-[500]">TOTAL GLOBAL</h3>
+              <h3 className="text-5xl font-[500] text-center">TOTAL GLOBAL</h3>
               <p className="text-sm text-gray-500">Last updated: {new Date(data['Global']['Date']).toLocaleString()}</p>
             </div>
             <GlobalDataField title="CASES" data={data['Global']['TotalConfirmed']} />
