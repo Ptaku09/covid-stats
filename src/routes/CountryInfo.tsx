@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import withRouter, { WithRouterProps } from '../utils/withRouter';
 import memoFetch from '../utils/memoFetch';
 import { CountryDailyInfo } from '../types/country';
-import WorldMap from '../components/organisms/WorldMap';
 import SpinnerLoader from '../components/atoms/SpinnerLoader';
+import PageNotFoundError from '../components/atoms/PageNotFoundError';
+import WorldMap from '../components/organisms/WorldMap';
 
 interface MyState {
   data: CountryDailyInfo[] | null;
   isError: boolean;
+  errorCode: number;
 }
 
 class CountryInfo extends Component<WithRouterProps, MyState> {
@@ -16,6 +18,7 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
     this.state = {
       data: null,
       isError: false,
+      errorCode: 0,
     };
   }
 
@@ -28,17 +31,31 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
     memoFetch(`${process.env.REACT_APP_BASE_URL}/total/country/${countrySlug}`)
       .then((data) => this.setState({ data }))
       .catch((err) => {
-        console.error(err);
-        this.setState({ isError: true });
+        const { status } = err.response;
+        this.setState({ isError: true, errorCode: status });
       });
   }
 
   render() {
-    const { data, isError } = this.state;
+    const { data, isError, errorCode } = this.state;
 
     return (
       <div className="w-full h-full flex items-center justify-center">
-        {data ? <WorldMap countryName={data[0].Country} /> : isError ? <div>Something went wrong</div> : <SpinnerLoader />}
+        {data ? (
+          <WorldMap countryName={data[0].Country} />
+        ) : isError ? (
+          <div className="w-full h-full flex items-center justify-center flex-col">
+            {errorCode === 404 ? (
+              <PageNotFoundError />
+            ) : (
+              <div>
+                <p>reload</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <SpinnerLoader />
+        )}
       </div>
     );
   }
