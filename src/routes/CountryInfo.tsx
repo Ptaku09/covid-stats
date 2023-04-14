@@ -34,7 +34,6 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
 
   render() {
     const { data, isError } = this.state;
-    const { countrySlug } = this.props.router.params;
 
     return (
       <div className="w-full h-full flex items-center justify-center">
@@ -48,16 +47,17 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
             >
               <Sphere stroke="#E4E5E6" strokeWidth={0.5} fill="transparent" id="test" />
               <Graticule stroke="#E4E5E6" strokeWidth={0.5} />
-              <Geographies geography="/countries.json">
+              <Geographies geography="/custom-light.geo.json">
                 {({ geographies }) =>
                   geographies.map((geo) => {
-                    const { name } = geo.properties;
+                    const { name_en: name } = geo.properties;
+                    const { Country: countryName } = data[0];
 
                     return (
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        fill={name === data[0].Country || name.toLowerCase() === countrySlug ? 'rgb(0 123 255)' : '#ccc'}
+                        fill={countryName.startsWith(name) ? 'rgb(0 123 255)' : '#ccc'}
                         stroke="#fff"
                         style={{
                           default: { outline: 'none' },
