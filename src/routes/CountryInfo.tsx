@@ -3,6 +3,7 @@ import withRouter, { WithRouterProps } from '../utils/withRouter';
 import memoFetch from '../utils/memoFetch';
 import { CountryDailyInfo } from '../types/country';
 import WorldMap from '../components/organisms/WorldMap';
+import SpinnerLoader from '../components/atoms/SpinnerLoader';
 
 interface MyState {
   data: CountryDailyInfo[] | null;
@@ -35,11 +36,9 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
   render() {
     const { data, isError } = this.state;
 
-    console.log(data);
-
     return (
       <div className="w-full h-full flex items-center justify-center">
-        {data ? <WorldMap countryName={data[0].Country} /> : isError ? <div>Something went wrong</div> : <div>Loading...</div>}
+        {data ? <WorldMap countryName={data[0].Country} /> : isError ? <div>Something went wrong</div> : <SpinnerLoader />}
       </div>
     );
   }

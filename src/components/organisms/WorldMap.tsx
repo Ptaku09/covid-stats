@@ -5,7 +5,7 @@ interface MyProps {
   countryName: string;
 }
 
-class WorldMap extends Component<MyProps, any> {
+class WorldMap extends Component<MyProps, {}> {
   constructor(props: MyProps) {
     super(props);
   }
