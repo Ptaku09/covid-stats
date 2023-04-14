@@ -4,6 +4,7 @@ import memoFetch from '../utils/memoFetch';
 import { CountryDailyInfo } from '../types/country';
 import SpinnerLoader from '../components/atoms/SpinnerLoader';
 import PageNotFoundError from '../components/atoms/PageNotFoundError';
+import TooManyRequestsError from '../components/atoms/TooManyRequestsError';
 import WorldMap from '../components/organisms/WorldMap';
 
 interface MyState {
@@ -40,19 +41,15 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
     const { data, isError, errorCode } = this.state;
 
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center flex-col">
         {data ? (
           <WorldMap countryName={data[0].Country} />
         ) : isError ? (
-          <div className="w-full h-full flex items-center justify-center flex-col">
-            {errorCode === 404 ? (
-              <PageNotFoundError />
-            ) : (
-              <div>
-                <p>reload</p>
-              </div>
-            )}
-          </div>
+          errorCode === 404 ? (
+            <PageNotFoundError />
+          ) : (
+            <TooManyRequestsError />
+          )
         ) : (
           <SpinnerLoader />
         )}
