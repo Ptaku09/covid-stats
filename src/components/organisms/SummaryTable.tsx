@@ -165,7 +165,6 @@ class SummaryTable extends Component<MyProps, MyState> {
             rows={this.state.combinedRows}
             rowClass={(row) => `hover:bg-blue-100 ${this.state.combinedRows.indexOf(row) % 2 === 0 ? 'bg-neutral-100' : ''}`}
             rowHeight={50}
-            onCellClick={(cell) => console.log(cell.row['Slug'])}
             columns={this.columns}
             sortColumns={this.state.sortColumns}
             onSortColumnsChange={this.setSortColumns}
@@ -173,7 +172,7 @@ class SummaryTable extends Component<MyProps, MyState> {
               sortable: true,
               formatter: (e: FormatterProps<CustomCountrySummary>) => {
                 if (e.column.key === 'Country') {
-                  return <CountryNameWithFlag countryCode={e.row['CountryCode']} countryName={e.row['Country']} />;
+                  return <CountryNameWithFlag countryCode={e.row['CountryCode']} countryName={e.row['Country']} countrySlug={e.row['Slug']} />;
                 }
 
                 return e.row[e.column.key];
