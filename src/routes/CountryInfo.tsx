@@ -24,7 +24,7 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
   }
 
   fetchCountryData(countrySlug: string) {
-    memoFetch(`${process.env.REACT_APP_BASE_URL}/country/${countrySlug}`)
+    memoFetch(`${process.env.REACT_APP_BASE_URL}/total/country/${countrySlug}`)
       .then((data) => this.setState({ data }))
       .catch((err) => {
         console.error(err);

@@ -1,5 +1,4 @@
 export interface CountryDailyInfo {
-  ID: string;
   Country: string;
   CountryCode: string;
   Province: string;
@@ -12,4 +11,5 @@ export interface CountryDailyInfo {
   Recovered: number;
   Active: number;
   Date: string;
+  Comment: string;
 }
