@@ -9,6 +9,7 @@ import TotalCasesGraph from '../components/organisms/TotalCasesGraph';
 import WorldMap from '../components/organisms/WorldMap';
 import NewCasesGraph from '../components/organisms/NewCasesGraph';
 import TotalDeathsGraph from '../components/organisms/TotalDeathsGraph';
+import NewDeathsGraph from '../components/organisms/NewDeathsGraph';
 
 export interface CustomCountryDailyInfo extends Pick<CountryDailyInfo, 'Date' | 'Active' | 'Confirmed' | 'Deaths'> {
   NewConfirmed: number;
@@ -48,10 +49,13 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
 
   normalizeData(data: CountryDailyInfo[]) {
     let prevConfirmed = 0;
+    let prevDeaths = 0;
 
     const normalized = data.map((item) => {
       const newConfirmed = Math.abs(item.Confirmed - prevConfirmed);
+      const newDeaths = Math.abs(item.Deaths - prevDeaths);
       prevConfirmed = item.Confirmed;
+      prevDeaths = item.Deaths;
 
       return {
         Date: new Date(item.Date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
@@ -59,6 +63,7 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
         Confirmed: item.Confirmed,
         NewConfirmed: newConfirmed,
         Deaths: item.Deaths,
+        NewDeaths: newDeaths,
       };
     });
 
@@ -76,6 +81,7 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
             <TotalCasesGraph countryName={countryName} data={data} />
             <NewCasesGraph countryName={countryName} data={data} />
             <TotalDeathsGraph countryName={countryName} data={data} />
+            <NewDeathsGraph countryName={countryName} data={data} />
           </>
         ) : isError ? (
           errorCode === 404 ? (
