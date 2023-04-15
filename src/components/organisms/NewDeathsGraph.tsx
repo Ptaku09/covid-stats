@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CustomCountryDailyInfo } from '../../routes/CountryInfo';
+import { tickFormatter } from '../../utils/tickFormatter';
 
 interface MyProps {
   countryName: string;
@@ -34,7 +35,7 @@ class NewCasesGraph extends Component<MyProps, {}> {
           >
             <CartesianGrid vertical={false} />
             <XAxis dataKey="Date" angle={-55} interval={screen.width < 768 ? 100 : 40} textAnchor="end" tick={{ fontSize: 12 }} />
-            <YAxis type="number" />
+            <YAxis type="number" tickFormatter={tickFormatter} />
             <Tooltip isAnimationActive={false} />
             <Bar dataKey="NewDeaths" fill="#353b48" />
           </BarChart>

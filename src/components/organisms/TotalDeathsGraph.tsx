@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { CartesianGrid, ComposedChart, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis, ZAxis } from 'recharts';
 import { CustomCountryDailyInfo } from '../../routes/CountryInfo';
+import { tickFormatter } from '../../utils/tickFormatter';
 
 interface MyProps {
   countryName: string;
@@ -34,7 +35,7 @@ class TotalDeathsGraph extends Component<MyProps, {}> {
           >
             <CartesianGrid vertical={false} />
             <XAxis dataKey="Date" angle={-55} interval={screen.width < 768 ? 100 : 40} textAnchor="end" tick={{ fontSize: 12 }} />
-            <YAxis type="number" dataKey="Deaths" tickFormatter={(value) => `${value >= 1000 ? value / 1000 + 'k' : 0}`} />
+            <YAxis type="number" dataKey="Deaths" tickFormatter={tickFormatter} />
             <ZAxis range={[15]} />
             <Tooltip isAnimationActive={false} />
             <Scatter dataKey="Deaths" fill={'#d05e1a'} />
