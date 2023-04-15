@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import withRouter, { WithRouterProps } from '../utils/withRouter';
+import React, { useEffect, useState } from 'react';
 import memoFetch from '../utils/memoFetch';
 import { CountryDailyInfo } from '../types/country';
 import SpinnerLoader from '../components/atoms/SpinnerLoader';
@@ -11,46 +10,31 @@ import NewCasesGraph from '../components/organisms/NewCasesGraph';
 import TotalDeathsGraph from '../components/organisms/TotalDeathsGraph';
 import NewDeathsGraph from '../components/organisms/NewDeathsGraph';
 import CountryDataSummary from '../components/molecules/CountryDataSummary';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 export interface CustomCountryDailyInfo extends Pick<CountryDailyInfo, 'Date' | 'Confirmed' | 'Deaths' | 'Recovered'> {
   NewConfirmed: number;
   NewDeaths: number;
 }
 
-interface MyState {
-  data: CustomCountryDailyInfo[] | null;
-  countryName: string;
-  isError: boolean;
-  errorCode: number;
-}
+const CountryInfo = () => {
+  const [data, setData] = useState<CustomCountryDailyInfo[] | null>(null);
+  const [countryName, setCountryName] = useState<string>('');
+  const [isError, setIsError] = useState<boolean>(false);
+  const [errorCode, setErrorCode] = useState<number>(0);
+  const { countrySlug } = useParams();
 
-class CountryInfo extends Component<WithRouterProps, MyState> {
-  constructor(props: WithRouterProps) {
-    super(props);
-    this.state = {
-      data: null,
-      countryName: '',
-      isError: false,
-      errorCode: 0,
-    };
-  }
-
-  componentDidMount() {
-    const { countrySlug } = this.props.router.params;
-    this.fetchCountryData(countrySlug);
-  }
-
-  fetchCountryData(countrySlug: string) {
+  useEffect(() => {
     memoFetch(`${process.env.REACT_APP_BASE_URL}/total/country/${countrySlug}`)
-      .then((data) => this.normalizeData(data))
+      .then((data) => normalizeData(data))
       .catch((err) => {
         const { status } = err.response;
-        this.setState({ isError: true, errorCode: status });
+        setIsError(true);
+        setErrorCode(status);
       });
-  }
+  }, []);
 
-  normalizeData(data: CountryDailyInfo[]) {
+  const normalizeData = (data: CountryDailyInfo[]) => {
     let prevConfirmed = 0;
     let prevDeaths = 0;
 
@@ -70,41 +54,38 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
       };
     });
 
-    this.setState({ countryName: data[0].Country, data: normalized });
-  }
+    setData(normalized);
+    setCountryName(data[0].Country);
+  };
 
-  render() {
-    const { data, countryName, isError, errorCode } = this.state;
-
-    return (
-      <div className="w-full h-auto flex items-center justify-center flex-col gap-5">
-        <Link to="/" className="text-blue-500 md:hover:text-blue-400 underline font-bold text-xl">
-          Go back
-        </Link>
-        <h2 className="text-4xl font-bold underline underline-offset-2">{countryName}</h2>
-        <div className="w-full h-full flex items-center justify-center flex-col gap-20">
-          {data ? (
-            <>
-              <WorldMap countryName={countryName} />
-              <CountryDataSummary data={data.at(-1)!} />
-              <TotalCasesGraph countryName={countryName} data={data} />
-              <NewCasesGraph countryName={countryName} data={data} />
-              <TotalDeathsGraph countryName={countryName} data={data} />
-              <NewDeathsGraph countryName={countryName} data={data} />
-            </>
-          ) : isError ? (
-            errorCode === 404 ? (
-              <PageNotFoundError />
-            ) : (
-              <TooManyRequestsError />
-            )
+  return (
+    <div className="w-full h-auto flex items-center justify-center flex-col gap-5">
+      <Link to="/" className="text-blue-500 md:hover:text-blue-400 underline font-bold text-xl">
+        Go back
+      </Link>
+      <h2 className="text-4xl font-bold underline underline-offset-2">{countryName}</h2>
+      <div className="w-full h-full flex items-center justify-center flex-col gap-20">
+        {data ? (
+          <>
+            <WorldMap countryName={countryName} />
+            <CountryDataSummary data={data.at(-1)!} />
+            <TotalCasesGraph countryName={countryName} data={data} />
+            <NewCasesGraph countryName={countryName} data={data} />
+            <TotalDeathsGraph countryName={countryName} data={data} />
+            <NewDeathsGraph countryName={countryName} data={data} />
+          </>
+        ) : isError ? (
+          errorCode === 404 ? (
+            <PageNotFoundError />
           ) : (
-            <SpinnerLoader />
-          )}
-        </div>
+            <TooManyRequestsError />
+          )
+        ) : (
+          <SpinnerLoader />
+        )}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
-export default withRouter(CountryInfo);
+export default CountryInfo;
