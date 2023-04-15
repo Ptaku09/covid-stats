@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis } from 'recharts';
-import { CountryDailyInfo } from '../../types/country';
+import { CustomCountryDailyInfo } from '../../routes/CountryInfo';
 
 interface MyProps {
   countryName: string;
-  data: Pick<CountryDailyInfo, 'Date' | 'Active' | 'Confirmed' | 'Deaths'>[];
+  data: CustomCountryDailyInfo[];
 }
 
 class TotalCasesGraph extends Component<MyProps, {}> {

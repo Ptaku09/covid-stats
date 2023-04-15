@@ -8,8 +8,12 @@ import TooManyRequestsError from '../components/atoms/TooManyRequestsError';
 import TotalCasesGraph from '../components/organisms/TotalCasesGraph';
 import WorldMap from '../components/organisms/WorldMap';
 
+export interface CustomCountryDailyInfo extends Pick<CountryDailyInfo, 'Date' | 'Active' | 'Confirmed' | 'Deaths'> {
+  NewConfirmed: number;
+}
+
 interface MyState {
-  data: Pick<CountryDailyInfo, 'Date' | 'Active' | 'Confirmed' | 'Deaths'>[] | null;
+  data: CustomCountryDailyInfo[] | null;
   countryName: string;
   isError: boolean;
   errorCode: number;
@@ -41,11 +45,17 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
   }
 
   normalizeData(data: CountryDailyInfo[]) {
+    let prevConfirmed = 0;
+
     const normalized = data.map((item) => {
+      const newConfirmed = item.Confirmed - prevConfirmed;
+      prevConfirmed = item.Confirmed;
+
       return {
         Date: new Date(item.Date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
         Active: item.Active,
         Confirmed: item.Confirmed,
+        NewConfirmed: newConfirmed,
         Deaths: item.Deaths,
       };
     });
