@@ -10,9 +10,11 @@ import WorldMap from '../components/organisms/WorldMap';
 import NewCasesGraph from '../components/organisms/NewCasesGraph';
 import TotalDeathsGraph from '../components/organisms/TotalDeathsGraph';
 import NewDeathsGraph from '../components/organisms/NewDeathsGraph';
+import CountryDataSummary from '../components/molecules/CountryDataSummary';
 
-export interface CustomCountryDailyInfo extends Pick<CountryDailyInfo, 'Date' | 'Active' | 'Confirmed' | 'Deaths'> {
+export interface CustomCountryDailyInfo extends Pick<CountryDailyInfo, 'Date' | 'Confirmed' | 'Deaths' | 'Recovered'> {
   NewConfirmed: number;
+  NewDeaths: number;
 }
 
 interface MyState {
@@ -59,11 +61,11 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
 
       return {
         Date: new Date(item.Date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
-        Active: item.Active,
         Confirmed: item.Confirmed,
         NewConfirmed: newConfirmed,
         Deaths: item.Deaths,
         NewDeaths: newDeaths,
+        Recovered: item.Recovered,
       };
     });
 
@@ -78,6 +80,7 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
         {data ? (
           <>
             <WorldMap countryName={countryName} />
+            <CountryDataSummary data={data.at(-1)!} />
             <TotalCasesGraph countryName={countryName} data={data} />
             <NewCasesGraph countryName={countryName} data={data} />
             <TotalDeathsGraph countryName={countryName} data={data} />
