@@ -14,11 +14,11 @@ class WorldMap extends Component<MyProps, {}> {
     const { countryName } = this.props;
 
     return (
-      <div className="hidden md:flex w-5/6 px-5 border-2 border-neutral-200">
+      <div className="hidden md:flex w-[800px] h-[400px] px-5 border-2 border-neutral-200 shadow-lg">
         <ComposableMap
           projectionConfig={{
             rotate: [-10, 0, 0],
-            scale: 147,
+            scale: 210,
           }}
         >
           <Sphere stroke="#E4E5E6" strokeWidth={0.5} fill="transparent" id="test" />
