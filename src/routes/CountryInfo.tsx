@@ -8,6 +8,7 @@ import TooManyRequestsError from '../components/atoms/TooManyRequestsError';
 import TotalCasesGraph from '../components/organisms/TotalCasesGraph';
 import WorldMap from '../components/organisms/WorldMap';
 import NewCasesGraph from '../components/organisms/NewCasesGraph';
+import TotalDeathsGraph from '../components/organisms/TotalDeathsGraph';
 
 export interface CustomCountryDailyInfo extends Pick<CountryDailyInfo, 'Date' | 'Active' | 'Confirmed' | 'Deaths'> {
   NewConfirmed: number;
@@ -74,6 +75,7 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
             <WorldMap countryName={countryName} />
             <TotalCasesGraph countryName={countryName} data={data} />
             <NewCasesGraph countryName={countryName} data={data} />
+            <TotalDeathsGraph countryName={countryName} data={data} />
           </>
         ) : isError ? (
           errorCode === 404 ? (
