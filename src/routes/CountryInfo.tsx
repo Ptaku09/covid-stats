@@ -77,10 +77,11 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
     const { data, countryName, isError, errorCode } = this.state;
 
     return (
-      <div className="w-full h-auto flex items-center justify-center flex-col gap-10">
+      <div className="w-full h-auto flex items-center justify-center flex-col gap-5">
         <Link to="/" className="text-blue-500 md:hover:text-blue-400 underline font-bold text-xl">
           Go back
         </Link>
+        <h2 className="text-4xl font-bold underline underline-offset-2">{countryName}</h2>
         <div className="w-full h-full flex items-center justify-center flex-col gap-20">
           {data ? (
             <>
