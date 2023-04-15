@@ -4,7 +4,7 @@ import Summary from '../components/templates/Summary';
 class Root extends Component<{}, {}> {
   render() {
     return (
-      <div className="w-screen h-auto min-h-screen">
+      <div className="w-screen h-auto">
         <Summary />
       </div>
     );

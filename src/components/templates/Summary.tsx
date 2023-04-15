@@ -4,6 +4,8 @@ import { TotalSummary } from '../../types/summary';
 import GlobalDataSummary from '../molecules/GlobalDataSummary';
 import SummaryTable from '../organisms/SummaryTable';
 import SummaryTableLoader from '../molecules/SummaryTableLoader';
+import TooManyRequestsError from '../atoms/TooManyRequestsError';
+import GlobalDataSummaryLoader from '../molecules/GlobalDataSummaryLoader';
 
 interface MyState {
   data: TotalSummary | null;
@@ -29,9 +31,20 @@ class Summary extends Component<{}, MyState> {
     const { data, isError } = this.state;
 
     return (
-      <div className="w-full h-auto flex justify-start items-center flex-col gap-10">
-        <GlobalDataSummary data={data} isError={isError} />
-        {data ? <SummaryTable data={data} /> : <SummaryTableLoader />}
+      <div className="w-full h-full flex justify-start items-center flex-col gap-10">
+        {data ? (
+          <>
+            <GlobalDataSummary data={data} />
+            <SummaryTable data={data} />
+          </>
+        ) : isError ? (
+          <TooManyRequestsError />
+        ) : (
+          <>
+            <GlobalDataSummaryLoader />
+            <SummaryTableLoader />
+          </>
+        )}
       </div>
     );
   }
