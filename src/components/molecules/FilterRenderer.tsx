@@ -4,7 +4,7 @@ import { Filter } from '../organisms/SummaryTable';
 
 export const FilterContext = createContext<Filter | undefined>(undefined);
 
-function FilterRendererWithHooks<R, SR, T extends HTMLOrSVGElement>({
+function FilterRenderer<R, SR, T extends HTMLOrSVGElement>({
   isCellSelected,
   column,
   children,
@@ -22,4 +22,4 @@ function FilterRendererWithHooks<R, SR, T extends HTMLOrSVGElement>({
   );
 }
 
-export default FilterRendererWithHooks;
+export default FilterRenderer;

@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CountrySummary, TotalSummary } from '../../types/summary';
 import DataGrid, { FormatterProps, SortColumn } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
-import FilterRendererWithHooks, { FilterContext } from '../utils/FileRendererWithHooks';
+import FilterRenderer, { FilterContext } from '../molecules/FilterRenderer';
 import CountryNameWithFlag from '../atoms/CountryNameWithFlag';
 
 interface MyProps {
@@ -19,15 +19,8 @@ export interface Filter extends Pick<CustomCountrySummary, 'Country'> {
   enabled: boolean;
 }
 
-interface MyState {
-  rows: CustomCountrySummary[];
-  sortColumns: readonly SortColumn[];
-  filters: Filter;
-  combinedRows: CustomCountrySummary[];
-}
-
 type Comparator = (a: CustomCountrySummary, b: CustomCountrySummary) => number;
-function getComparator(column: string): Comparator {
+const getComparator = (column: string): Comparator => {
   switch (column) {
     case 'Country':
       return (a, b) => a['Country'].localeCompare(b['Country']);
@@ -42,17 +35,38 @@ function getComparator(column: string): Comparator {
     default:
       return (a, b) => 0;
   }
-}
+};
 
-class SummaryTable extends Component<MyProps, MyState> {
-  columns = [
+const SummaryTable = ({ data }: MyProps) => {
+  const [rows] = useState<CustomCountrySummary[]>(
+    data['Countries'].map((item, index) => ({
+      Index: index + 1,
+      Country: item['Country'],
+      CountryCode: item['CountryCode'],
+      Slug: item['Slug'],
+      NewConfirmed: item['NewConfirmed'],
+      TotalConfirmed: item['TotalConfirmed'],
+      NewDeaths: item['NewDeaths'],
+      TotalDeaths: item['TotalDeaths'],
+      NewRecovered: item['NewRecovered'],
+      TotalRecovered: item['TotalRecovered'],
+    }))
+  );
+  const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([]);
+  const [filters, setFilters] = useState<Filter>({
+    complete: undefined,
+    enabled: true,
+    Country: '',
+  });
+  const [combinedRows, setCombinedRows] = useState<CustomCountrySummary[]>([]);
+  const columns = [
     { key: 'Index', name: '#', headerCellClass: 'box-border border-b-2 border-r-2' },
     {
       key: 'Country',
       name: 'Country',
       headerCellClass: 'leading-8 box-border border-b-2 border-r-2',
       headerRenderer: (props: any) => (
-        <FilterRendererWithHooks<CustomCountrySummary, unknown, HTMLInputElement> {...props}>
+        <FilterRenderer<CustomCountrySummary, unknown, HTMLInputElement> {...props}>
           {({ filters, ...rest }) => (
             <input
               {...rest}
@@ -60,17 +74,15 @@ class SummaryTable extends Component<MyProps, MyState> {
               className="w-auto h-8 px-2 border-2 rounded-lg font-thin"
               maxLength={30}
               onChange={(e) =>
-                this.setState({
-                  filters: {
-                    ...filters,
-                    Country: e.target.value,
-                  },
+                setFilters({
+                  ...filters,
+                  Country: e.target.value,
                 })
               }
               onKeyDown={(e) => ['ArrowLeft', 'ArrowRight'].includes(e.key) && e.stopPropagation()}
             />
           )}
-        </FilterRendererWithHooks>
+        </FilterRenderer>
       ),
     },
     { key: 'NewConfirmed', name: 'New Confirmed', headerCellClass: 'box-border border-b-2 border-r-2' },
@@ -81,50 +93,19 @@ class SummaryTable extends Component<MyProps, MyState> {
     { key: 'TotalRecovered', name: 'Total Recovered', headerCellClass: 'box-border border-b-2' },
   ];
 
-  constructor(props: MyProps) {
-    super(props);
-    this.state = {
-      rows: props.data['Countries'].map((item, index) => ({
-        Index: index + 1,
-        Country: item['Country'],
-        CountryCode: item['CountryCode'],
-        Slug: item['Slug'],
-        NewConfirmed: item['NewConfirmed'],
-        TotalConfirmed: item['TotalConfirmed'],
-        NewDeaths: item['NewDeaths'],
-        TotalDeaths: item['TotalDeaths'],
-        NewRecovered: item['NewRecovered'],
-        TotalRecovered: item['TotalRecovered'],
-      })),
-      sortColumns: [],
-      filters: {
-        complete: undefined,
-        enabled: true,
-        Country: '',
-      },
-      combinedRows: [],
-    };
-  }
+  useEffect(() => {
+    setCombinedRows(rows);
+  }, []);
 
-  componentDidMount() {
-    this.setState({
-      combinedRows: this.state.rows,
-    });
-  }
+  useEffect(() => {
+    combineRows();
+  }, [filters, sortColumns]);
 
-  componentDidUpdate(prevProps: MyProps, prevState: MyState) {
-    if (prevState.filters !== this.state.filters || prevState.sortColumns !== this.state.sortColumns) {
-      this.combineResults();
-    }
-  }
+  const handleSort = useMemo((): readonly CustomCountrySummary[] => {
+    if (sortColumns.length === 0) return rows;
 
-  sortedRows() {
-    if (this.state.sortColumns.length === 0) {
-      return this.state.rows;
-    }
-
-    return [...this.state.rows].sort((a, b) => {
-      for (const sort of this.state.sortColumns) {
+    return [...rows].sort((a, b) => {
+      for (const sort of sortColumns) {
         const comparator = getComparator(sort.columnKey);
         const result = comparator(a, b);
 
@@ -135,54 +116,48 @@ class SummaryTable extends Component<MyProps, MyState> {
 
       return 0;
     });
-  }
+  }, [rows, sortColumns]);
 
-  setSortColumns = (sortColumns: readonly SortColumn[]) => {
-    this.setState({ sortColumns });
-  };
-
-  filteredRows() {
-    return this.state.rows.filter((row) => {
-      return row['Country'].toLowerCase().startsWith(this.state.filters.Country.toLowerCase());
+  const handleFilter = useMemo((): readonly CustomCountrySummary[] => {
+    return rows.filter((row) => {
+      return row['Country'].toLowerCase().startsWith(filters.Country.toLowerCase());
     });
-  }
+  }, [rows, filters]);
 
-  combineResults() {
-    const sortedRows = this.sortedRows();
-    const filteredRows = this.filteredRows();
+  const combineRows = () => {
+    const sortedRows = handleSort;
+    const filteredRows = handleFilter;
     const combinedRows = sortedRows.filter((row) => filteredRows.includes(row));
 
-    this.setState({ combinedRows });
-  }
+    setCombinedRows(combinedRows);
+  };
 
-  render() {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <FilterContext.Provider value={this.state.filters}>
-          <DataGrid
-            className="rdg-light w-5/6 h-full border-2"
-            headerRowHeight={80}
-            rows={this.state.combinedRows}
-            rowClass={(row) => `hover:bg-blue-100 ${this.state.combinedRows.indexOf(row) % 2 === 0 ? 'bg-neutral-100' : ''}`}
-            rowHeight={50}
-            columns={this.columns}
-            sortColumns={this.state.sortColumns}
-            onSortColumnsChange={this.setSortColumns}
-            defaultColumnOptions={{
-              sortable: true,
-              formatter: (e: FormatterProps<CustomCountrySummary>) => {
-                if (e.column.key === 'Country') {
-                  return <CountryNameWithFlag countryCode={e.row['CountryCode']} countryName={e.row['Country']} countrySlug={e.row['Slug']} />;
-                }
+  return (
+    <div className="w-full h-screen flex items-center justify-center">
+      <FilterContext.Provider value={filters}>
+        <DataGrid
+          className="rdg-light w-5/6 h-full border-2"
+          headerRowHeight={80}
+          rows={combinedRows}
+          rowClass={(row) => `hover:bg-blue-100 ${combinedRows.indexOf(row) % 2 === 0 ? 'bg-neutral-100' : ''}`}
+          rowHeight={50}
+          columns={columns}
+          sortColumns={sortColumns}
+          onSortColumnsChange={setSortColumns}
+          defaultColumnOptions={{
+            sortable: true,
+            formatter: (e: FormatterProps<CustomCountrySummary>) => {
+              if (e.column.key === 'Country') {
+                return <CountryNameWithFlag countryCode={e.row['CountryCode']} countryName={e.row['Country']} countrySlug={e.row['Slug']} />;
+              }
 
-                return e.row[e.column.key];
-              },
-            }}
-          />
-        </FilterContext.Provider>
-      </div>
-    );
-  }
-}
+              return e.row[e.column.key];
+            },
+          }}
+        />
+      </FilterContext.Provider>
+    </div>
+  );
+};
 
 export default SummaryTable;
