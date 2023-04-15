@@ -24,8 +24,6 @@ class NewCasesGraph extends Component<MyProps, {}> {
         <ResponsiveContainer width={screen.width < 768 ? '95%' : 800} height={400}>
           <BarChart
             data={data}
-            width={800}
-            height={400}
             margin={{
               top: 40,
               right: 20,

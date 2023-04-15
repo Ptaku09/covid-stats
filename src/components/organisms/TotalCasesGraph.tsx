@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis } from 'recharts';
+import { CartesianGrid, ComposedChart, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis, ZAxis } from 'recharts';
 import { CustomCountryDailyInfo } from '../../routes/CountryInfo';
 
 interface MyProps {
@@ -22,9 +22,8 @@ class TotalCasesGraph extends Component<MyProps, {}> {
           <p className="text-gray-500 font-thin text-sm">Last update: {data.at(-1)?.Date}</p>
         </div>
         <ResponsiveContainer width={screen.width < 768 ? '95%' : 800} height={400}>
-          <ScatterChart
-            width={800}
-            height={400}
+          <ComposedChart
+            data={data}
             margin={{
               top: 40,
               right: 20,
@@ -38,8 +37,8 @@ class TotalCasesGraph extends Component<MyProps, {}> {
             <YAxis type="number" dataKey="Confirmed" tickFormatter={(value) => `${value >= 1000000 ? value / 1000000 + 'M' : 0}`} />
             <ZAxis range={[15]} />
             <Tooltip isAnimationActive={false} />
-            <Scatter data={data} fill={'#8884d8'} />
-          </ScatterChart>
+            <Scatter dataKey="Confirmed" fill={'#8884d8'} />
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     );
