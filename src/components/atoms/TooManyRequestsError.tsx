@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class PageNotFoundError extends Component<{}, {}> {
   render() {
     return (
-      <div className="w-96 p-5 mx-5 flex items-center justify-center flex-col gap-4 border-2 shadow-lg text-center">
+      <div className="w-11/12 md:w-96 p-5 mx-5 flex items-center justify-center flex-col gap-4 border-2 shadow-lg text-center">
         <h3 className="text-4xl font-bold">Oops!</h3>
         <p className="text-lg">Too many requests.</p>
         <p className="text-lg">
