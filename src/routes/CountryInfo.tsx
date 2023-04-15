@@ -11,6 +11,7 @@ import NewCasesGraph from '../components/organisms/NewCasesGraph';
 import TotalDeathsGraph from '../components/organisms/TotalDeathsGraph';
 import NewDeathsGraph from '../components/organisms/NewDeathsGraph';
 import CountryDataSummary from '../components/molecules/CountryDataSummary';
+import { Link } from 'react-router-dom';
 
 export interface CustomCountryDailyInfo extends Pick<CountryDailyInfo, 'Date' | 'Confirmed' | 'Deaths' | 'Recovered'> {
   NewConfirmed: number;
@@ -76,25 +77,30 @@ class CountryInfo extends Component<WithRouterProps, MyState> {
     const { data, countryName, isError, errorCode } = this.state;
 
     return (
-      <div className="w-full h-full flex items-center justify-center flex-col gap-20">
-        {data ? (
-          <>
-            <WorldMap countryName={countryName} />
-            <CountryDataSummary data={data.at(-1)!} />
-            <TotalCasesGraph countryName={countryName} data={data} />
-            <NewCasesGraph countryName={countryName} data={data} />
-            <TotalDeathsGraph countryName={countryName} data={data} />
-            <NewDeathsGraph countryName={countryName} data={data} />
-          </>
-        ) : isError ? (
-          errorCode === 404 ? (
-            <PageNotFoundError />
+      <div className="w-full h-auto flex items-center justify-center flex-col gap-10">
+        <Link to="/" className="text-blue-500 md:hover:text-blue-400 underline font-bold text-xl">
+          Go back
+        </Link>
+        <div className="w-full h-full flex items-center justify-center flex-col gap-20">
+          {data ? (
+            <>
+              <WorldMap countryName={countryName} />
+              <CountryDataSummary data={data.at(-1)!} />
+              <TotalCasesGraph countryName={countryName} data={data} />
+              <NewCasesGraph countryName={countryName} data={data} />
+              <TotalDeathsGraph countryName={countryName} data={data} />
+              <NewDeathsGraph countryName={countryName} data={data} />
+            </>
+          ) : isError ? (
+            errorCode === 404 ? (
+              <PageNotFoundError />
+            ) : (
+              <TooManyRequestsError />
+            )
           ) : (
-            <TooManyRequestsError />
-          )
-        ) : (
-          <SpinnerLoader />
-        )}
+            <SpinnerLoader />
+          )}
+        </div>
       </div>
     );
   }
