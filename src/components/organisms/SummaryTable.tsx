@@ -38,20 +38,6 @@ const getComparator = (column: string): Comparator => {
 };
 
 const SummaryTable = ({ data }: MyProps) => {
-  const [rows] = useState<CustomCountrySummary[]>(
-    data['Countries'].map((item, index) => ({
-      Index: index + 1,
-      Country: item['Country'],
-      CountryCode: item['CountryCode'],
-      Slug: item['Slug'],
-      NewConfirmed: item['NewConfirmed'],
-      TotalConfirmed: item['TotalConfirmed'],
-      NewDeaths: item['NewDeaths'],
-      TotalDeaths: item['TotalDeaths'],
-      NewRecovered: item['NewRecovered'],
-      TotalRecovered: item['TotalRecovered'],
-    }))
-  );
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([]);
   const [filters, setFilters] = useState<Filter>({
     complete: undefined,
@@ -59,6 +45,18 @@ const SummaryTable = ({ data }: MyProps) => {
     Country: '',
   });
   const [combinedRows, setCombinedRows] = useState<CustomCountrySummary[]>([]);
+  const rows: CustomCountrySummary[] = data['Countries'].map((item, index) => ({
+    Index: index + 1,
+    Country: item['Country'],
+    CountryCode: item['CountryCode'],
+    Slug: item['Slug'],
+    NewConfirmed: item['NewConfirmed'],
+    TotalConfirmed: item['TotalConfirmed'],
+    NewDeaths: item['NewDeaths'],
+    TotalDeaths: item['TotalDeaths'],
+    NewRecovered: item['NewRecovered'],
+    TotalRecovered: item['TotalRecovered'],
+  }));
   const columns = [
     { key: 'Index', name: '#', headerCellClass: 'box-border border-b-2 border-r-2' },
     {
